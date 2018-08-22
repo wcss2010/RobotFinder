@@ -43,7 +43,7 @@ namespace RobotFinderLibrary
             set { _udpFreePortMin = value; }
         }
 
-        private int _udpFreePortMax = 60600;
+        private int _udpFreePortMax = 60100;
         /// <summary>
         /// UDP Listen Port Max
         /// </summary>
@@ -134,14 +134,14 @@ namespace RobotFinderLibrary
                 udpWorker = null;
             }
 
-            if (udpClient != null)
+            if (_udpClient != null)
             {
                 try
                 {
-                    udpClient.Close();
+                    _udpClient.Close();
                 }
                 catch (Exception ex) { }
-                udpClient = null;
+                _udpClient = null;
             }
         }
     }

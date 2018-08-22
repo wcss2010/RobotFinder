@@ -28,17 +28,21 @@ namespace RobotFinder
         {
             base.OnLoad(e);
 
-            
+            listener.UDPReceivedEvent += listener_UDPReceivedEvent;
+            listener.OpenListener();
         }
 
-
+        void listener_UDPReceivedEvent(object sender, ReceivedEventArgs args)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes("hello");
+            listener.UdpClient.Send(bytes, bytes.Length, args.Remote);
+        }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             base.OnFormClosing(e);
 
-            CloseListener();
+            listener.CloseListener();
         }
-
     }
 }

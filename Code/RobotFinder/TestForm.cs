@@ -17,8 +17,7 @@ namespace RobotFinder
     public partial class TestForm : Form
     {
         UDPListener listener = new UDPListener();
-
-
+        
         public TestForm()
         {
             InitializeComponent();
@@ -30,6 +29,8 @@ namespace RobotFinder
 
             listener.UDPReceivedEvent += listener_UDPReceivedEvent;
             listener.OpenListener();
+
+            this.Text = "本地端口：" + listener.LocalUdpPort;
         }
 
         void listener_UDPReceivedEvent(object sender, ReceivedEventArgs args)

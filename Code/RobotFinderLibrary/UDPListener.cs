@@ -114,7 +114,7 @@ namespace RobotFinderLibrary
                 }
                 catch (Exception ex)
                 {
-                    System.Console.WriteLine(ex.ToString());
+                    //System.Console.WriteLine(ex.ToString());
                 }
 
 

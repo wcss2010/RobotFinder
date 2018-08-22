@@ -74,7 +74,7 @@ namespace RobotFinderLibrary
 
         private BackgroundWorker udpWorker = null;
 
-        private void OpenListener()
+        public void OpenListener()
         {
             for (int portVal = _udpFreePortMin; portVal <= _udpFreePortMax; portVal++)
             {
@@ -125,8 +125,8 @@ namespace RobotFinderLibrary
                 catch (Exception ex) { }
             }
         }
-        
-        private void CloseListener()
+
+        public void CloseListener()
         {
             if (udpWorker != null)
             {

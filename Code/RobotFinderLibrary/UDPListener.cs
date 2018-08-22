@@ -106,7 +106,7 @@ namespace RobotFinderLibrary
                 try
                 {
                     //接收消息
-                    IPEndPoint remotePoint = new IPEndPoint(IPAddress.Any, LocalUdpPort);
+                    IPEndPoint remotePoint = new IPEndPoint(IPAddress.Any, 0);
                     byte[] content = UdpClient.Receive(ref remotePoint);
 
                     //投递事件

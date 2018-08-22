@@ -154,22 +154,30 @@ namespace RobotFinderLibrary
                     {
                         ThreadPool.QueueUserWorkItem(new WaitCallback(delegate(object stateobj2)
                             {
-                                //取IP地址
-                                IPEndPoint ipe = null;
-                                ScanQueues.TryDequeue(out ipe);
+                                try
+                                {
+                                    //取IP地址
+                                    IPEndPoint ipe = null;
+                                    ScanQueues.TryDequeue(out ipe);
 
-                                //发送查询指令
-                                if (ipe != null){
-                                    byte[] queryCmd = Encoding.UTF8.GetBytes(CommandConst.QUERY_ROBOT_STATUS);
-                                    UdpClient.UdpClient.Send(queryCmd, queryCmd.Length, ipe);
-
-                                    //投递事件
-                                    if (ProgressEvent != null)
+                                    //发送查询指令
+                                    if (ipe != null)
                                     {
-                                        ProgressEventArgs pea = new ProgressEventArgs();
-                                        pea.Remote = ipe;
-                                        ProgressEvent(this, pea);
+                                        byte[] queryCmd = Encoding.UTF8.GetBytes(CommandConst.QUERY_ROBOT_STATUS);
+                                        UdpClient.UdpClient.Send(queryCmd, queryCmd.Length, ipe);
+
+                                        //投递事件
+                                        if (ProgressEvent != null)
+                                        {
+                                            ProgressEventArgs pea = new ProgressEventArgs();
+                                            pea.Remote = ipe;
+                                            ProgressEvent(this, pea);
+                                        }
                                     }
+                                }
+                                catch (Exception ex)
+                                {
+                                    System.Console.WriteLine(ex.ToString());
                                 }
                             }));
 

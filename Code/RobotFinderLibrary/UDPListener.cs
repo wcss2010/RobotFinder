@@ -101,20 +101,24 @@ namespace RobotFinderLibrary
 
         void udpWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            IPEndPoint remotePoint = null;
             while (!((BackgroundWorker)sender).CancellationPending)
             {
                 try
                 {
-                    //接收消息
-                    IPEndPoint remotePoint = new IPEndPoint(IPAddress.Any, 0);
-                    byte[] content = UdpClient.Receive(ref remotePoint);
+                    if (UdpClient.Available > 0)
+                    {
+                        //接收消息
+                        remotePoint = new IPEndPoint(IPAddress.Any, 0);
+                        byte[] content = UdpClient.Receive(ref remotePoint);
 
-                    //投递事件
-                    OnUDPReceivedEvent(remotePoint, content);
+                        //投递事件
+                        OnUDPReceivedEvent(remotePoint, content);
+                    }
                 }
                 catch (Exception ex)
                 {
-                    //System.Console.WriteLine(ex.ToString());
+                    System.Console.WriteLine(ex.ToString());
                 }
 
 

@@ -179,6 +179,15 @@ namespace RobotFinderLibrary
                                 {
                                     System.Console.WriteLine(ex.ToString());
                                 }
+
+                                //结束事件
+                                if (ScanQueues.Count == 0)
+                                {
+                                    if (StopEvent != null)
+                                    {
+                                        StopEvent(this, new EventArgs());
+                                    }
+                                }
                             }));
 
                         try
@@ -186,12 +195,6 @@ namespace RobotFinderLibrary
                             Thread.Sleep(5);
                         }
                         catch (Exception ex) { }
-                    }
-
-                    //结束事件
-                    if (StopEvent != null)
-                    {
-                        StopEvent(this, new EventArgs());
                     }
                 }));
         }

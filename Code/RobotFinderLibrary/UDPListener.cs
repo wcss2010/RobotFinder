@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace RobotFinderLibrary
 {
-    public delegate void UDPReceivedEventDelegate(object sender,ReceivedEventArgs args);
+    public delegate void UDPReceivedEventDelegate(object sender, ReceivedEventArgs args);
 
     public class ReceivedEventArgs : EventArgs
     {
@@ -101,20 +101,16 @@ namespace RobotFinderLibrary
 
         void udpWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            IPEndPoint remotePoint = null;
+            IPEndPoint remotePoint = new IPEndPoint(IPAddress.Any, 0);
             while (!((BackgroundWorker)sender).CancellationPending)
             {
                 try
                 {
-                    if (UdpClient.Available > 0)
-                    {
-                        //接收消息
-                        remotePoint = new IPEndPoint(IPAddress.Any, 0);
-                        byte[] content = UdpClient.Receive(ref remotePoint);
+                    //接收消息                        
+                    byte[] content = UdpClient.Receive(ref remotePoint);
 
-                        //投递事件
-                        OnUDPReceivedEvent(remotePoint, content);
-                    }
+                    //投递事件
+                    OnUDPReceivedEvent(remotePoint, content);
                 }
                 catch (Exception ex)
                 {

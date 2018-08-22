@@ -16,7 +16,7 @@ namespace RobotFinder
 {
     public partial class TestForm : Form
     {
-        UDPListener listener = new UDPListener();
+        UDPPortScanListener listener = new UDPPortScanListener();
         
         public TestForm()
         {
@@ -27,23 +27,17 @@ namespace RobotFinder
         {
             base.OnLoad(e);
 
-            listener.UDPReceivedEvent += listener_UDPReceivedEvent;
-            listener.OpenListener();
+            listener.UdpClient.OpenListener();
+            listener.ResponseText = "哪个剧比较好看?";
 
-            this.Text = "本地端口：" + listener.LocalUdpPort;
-        }
-
-        void listener_UDPReceivedEvent(object sender, ReceivedEventArgs args)
-        {
-            byte[] bytes = Encoding.UTF8.GetBytes("hello");
-            listener.UdpClient.Send(bytes, bytes.Length, args.Remote);
+            this.Text = "本地端口：" + listener.UdpClient.LocalUdpPort;
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             base.OnFormClosing(e);
 
-            listener.CloseListener();
+            listener.UdpClient.CloseListener();
         }
     }
 }

@@ -143,6 +143,12 @@ namespace RobotFinderLibrary
                                 }
                             }));
                     }
+
+                    //结束事件
+                    if (StopEvent != null)
+                    {
+                        StopEvent(this, new EventArgs());
+                    }
                 }));
         }
 

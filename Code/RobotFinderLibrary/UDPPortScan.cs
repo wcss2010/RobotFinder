@@ -15,6 +15,17 @@ namespace RobotFinderLibrary
     /// <param name="args"></param>
     public delegate void StartAndStopNotifyDelegate(object sender,EventArgs args);
 
+    public delegate void ProgressEventDelegate(object sender,ProgressEventArgs args);
+
+    public delegate void RobotResponseEvenDelegate(object sender, ProgressEventArgs args);
+
+    public class ProgressEventArgs : EventArgs
+    {
+        public IPEndPoint Remote { get; set; }
+
+        public string ResponseText { get; set; }
+    }
+
     public class UDPPortScan
     {
         System.Collections.Concurrent.ConcurrentQueue<IPEndPoint> _scanQueues = new System.Collections.Concurrent.ConcurrentQueue<IPEndPoint>();
@@ -37,6 +48,8 @@ namespace RobotFinderLibrary
 
         public event StartAndStopNotifyDelegate StartEvent;
         public event StartAndStopNotifyDelegate StopEvent;
+        public event ProgressEventDelegate ProgressEvent;
+        public event RobotResponseEvenDelegate RobotResponseEvent;
 
         private UDPListener _udpClient = new UDPListener();
         /// <summary>
@@ -64,7 +77,16 @@ namespace RobotFinderLibrary
                         return;
                     }
 
-                    ResultDict.TryAdd(args.Remote.ToString(), result.Replace(CommandConst.ROBOT_ONLINE, string.Empty).Trim());
+                    string txt = result.Replace(CommandConst.ROBOT_ONLINE, string.Empty).Trim();
+                    ResultDict.TryAdd(args.Remote.ToString(), txt);
+
+                    if (RobotResponseEvent != null)
+                    {
+                        ProgressEventArgs pea = new ProgressEventArgs();
+                        pea.Remote = args.Remote;
+                        pea.ResponseText = txt;
+                        RobotResponseEvent(this, pea);
+                    }
                 }
             }
         }
@@ -140,8 +162,22 @@ namespace RobotFinderLibrary
                                 if (ipe != null){
                                     byte[] queryCmd = Encoding.UTF8.GetBytes(CommandConst.QUERY_ROBOT_STATUS);
                                     UdpClient.UdpClient.Send(queryCmd, queryCmd.Length, ipe);
+
+                                    //投递事件
+                                    if (ProgressEvent != null)
+                                    {
+                                        ProgressEventArgs pea = new ProgressEventArgs();
+                                        pea.Remote = ipe;
+                                        ProgressEvent(this, pea);
+                                    }
                                 }
                             }));
+
+                        try
+                        {
+                            Thread.Sleep(5);
+                        }
+                        catch (Exception ex) { }
                     }
 
                     //结束事件

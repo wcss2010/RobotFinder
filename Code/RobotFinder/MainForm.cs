@@ -66,8 +66,14 @@ namespace RobotFinder
 
         private void button1_Click(object sender, EventArgs e)
         {
-            portScan.InitQueues("192.168.8.111", "192.168.8.112", 50000, 50100);
+            portScan.InitQueues("192.168.43.255", 50000, 50100);
             portScan.StartScan();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            //byte[] bytes = Encoding.UTF8.GetBytes(CommandConst.QUERY_ROBOT_STATUS);
+            //portScan.UdpClient.UdpClient.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Parse("192.168.43.255"), 50100));
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Management;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -80,7 +81,7 @@ namespace RobotFinderLibrary
             {
                 try
                 {
-                    _udpClient = new UdpClient(portVal);
+                    _udpClient = new UdpClient(new IPEndPoint(IPAddress.Parse(GetLocalIP()), portVal));
                     _udpClient.EnableBroadcast = true;
                     LocalUdpPort = portVal;
                     break;
@@ -144,6 +145,35 @@ namespace RobotFinderLibrary
                 catch (Exception ex) { }
                 _udpClient = null;
             }
+        }
+
+        /// <summary>
+        /// 获取本机IP地址
+        /// </summary>
+        /// <returns>本机IP地址</returns>
+        public string GetLocalIP()
+        {
+            string stringMAC = "";
+            string stringIP = "0.0.0.0";
+
+            #region 查找IP
+            ManagementClass managementClass = new ManagementClass("Win32_NetworkAdapterConfiguration");
+            ManagementObjectCollection managementObjectCollection = managementClass.GetInstances();
+            foreach (ManagementObject managementObject in managementObjectCollection)
+            {
+                if ((bool)managementObject["IPEnabled"] == true)
+                {
+                    stringMAC += managementObject["MACAddress"].ToString();
+                    string[] IPAddresses = (string[])managementObject["IPAddress"];
+                    if (IPAddresses.Length > 0)
+                    {
+                        stringIP = IPAddresses[0];
+                    }
+                }
+            }
+            #endregion
+
+            return stringIP.ToString();
         }
     }
 }

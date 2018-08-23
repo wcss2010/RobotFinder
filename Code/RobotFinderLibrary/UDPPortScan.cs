@@ -13,9 +13,9 @@ namespace RobotFinderLibrary
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="args"></param>
-    public delegate void StartAndStopNotifyDelegate(object sender,EventArgs args);
+    public delegate void StartAndStopNotifyDelegate(object sender, EventArgs args);
 
-    public delegate void ProgressEventDelegate(object sender,ProgressEventArgs args);
+    public delegate void ProgressEventDelegate(object sender, ProgressEventArgs args);
 
     public delegate void RobotResponseEvenDelegate(object sender, ProgressEventArgs args);
 
@@ -106,34 +106,16 @@ namespace RobotFinderLibrary
         /// <param name="ipEnd">IP段结束,0.0.0.255</param>
         /// <param name="portStart">端口开始</param>
         /// <param name="portEnd">端口结束</param>
-        public void InitQueues(string ipStart, string ipEnd, int portStart, int portEnd)
+        public void InitQueues(string boardcastIpAddress, int portStart, int portEnd)
         {
-            string[] ipStartTeam = ipStart.Split('.');
-            string[] ipEndTeam = ipEnd.Split('.');
-            if (ipStartTeam != null && ipEndTeam != null && ipStartTeam.Length == ipEndTeam.Length && ipStartTeam.Length >= 4)
+            //生成端口
+            for (int portNum = portStart; portNum <= portEnd; portNum++)
             {
-                int ipStartIndex = int.Parse(ipStartTeam[3]);
-                int ipEndIndex = int.Parse(ipEndTeam[3]);
-                int ipCount = ipEndIndex - ipStartIndex;
-                if (ipCount >= 1 && portEnd > portStart)
+                try
                 {
-                    //生成IP和端口信息
-                    for (int ipNum = ipStartIndex; ipNum <= ipEndIndex; ipNum++)
-                    {
-                        //IP地址
-                        string ipAddress = ipStartTeam[0] + "." + ipStartTeam[1] + "." + ipStartTeam[2] + "." + ipNum;
-
-                        //生成端口
-                        for (int portNum = portStart; portNum <= portEnd; portNum++)
-                        {
-                            try
-                            {
-                                ScanQueues.Enqueue(new IPEndPoint(IPAddress.Parse(ipAddress), portNum));
-                            }
-                            catch (Exception ex) { }
-                        }
-                    }
+                    ScanQueues.Enqueue(new IPEndPoint(IPAddress.Parse(boardcastIpAddress), portNum));
                 }
+                catch (Exception ex) { }
             }
         }
 

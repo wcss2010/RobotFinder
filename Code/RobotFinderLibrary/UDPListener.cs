@@ -81,6 +81,7 @@ namespace RobotFinderLibrary
                 try
                 {
                     _udpClient = new UdpClient(portVal);
+                    _udpClient.EnableBroadcast = true;
                     LocalUdpPort = portVal;
                     break;
                 }

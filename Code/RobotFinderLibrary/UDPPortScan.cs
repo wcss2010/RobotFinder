@@ -134,43 +134,40 @@ namespace RobotFinderLibrary
 
                     while (ScanQueues.Count > 0)
                     {
-                        ThreadPool.QueueUserWorkItem(new WaitCallback(delegate(object stateobj2)
+                        try
+                        {
+                            //取IP地址
+                            IPEndPoint ipe = null;
+                            ScanQueues.TryDequeue(out ipe);
+
+                            //发送查询指令
+                            if (ipe != null)
                             {
-                                try
-                                {
-                                    //取IP地址
-                                    IPEndPoint ipe = null;
-                                    ScanQueues.TryDequeue(out ipe);
+                                byte[] queryCmd = Encoding.UTF8.GetBytes(CommandConst.QUERY_ROBOT_STATUS);
+                                UdpClient.UdpClient.Send(queryCmd, queryCmd.Length, ipe);
 
-                                    //发送查询指令
-                                    if (ipe != null)
-                                    {
-                                        byte[] queryCmd = Encoding.UTF8.GetBytes(CommandConst.QUERY_ROBOT_STATUS);
-                                        UdpClient.UdpClient.Send(queryCmd, queryCmd.Length, ipe);
-
-                                        //投递事件
-                                        if (ProgressEvent != null)
-                                        {
-                                            ProgressEventArgs pea = new ProgressEventArgs();
-                                            pea.Remote = ipe;
-                                            ProgressEvent(this, pea);
-                                        }
-                                    }
-                                }
-                                catch (Exception ex)
+                                //投递事件
+                                if (ProgressEvent != null)
                                 {
-                                    System.Console.WriteLine(ex.ToString());
+                                    ProgressEventArgs pea = new ProgressEventArgs();
+                                    pea.Remote = ipe;
+                                    ProgressEvent(this, pea);
                                 }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Console.WriteLine(ex.ToString());
+                        }
 
-                                //结束事件
-                                if (ScanQueues.Count == 0)
-                                {
-                                    if (StopEvent != null)
-                                    {
-                                        StopEvent(this, new EventArgs());
-                                    }
-                                }
-                            }));
+                        //结束事件
+                        if (ScanQueues.Count == 0)
+                        {
+                            if (StopEvent != null)
+                            {
+                                StopEvent(this, new EventArgs());
+                            }
+                        }
 
                         try
                         {

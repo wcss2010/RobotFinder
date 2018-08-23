@@ -66,6 +66,7 @@ namespace RobotFinder
 
         private void button1_Click(object sender, EventArgs e)
         {
+            portScan.ResultDict.Clear();
             portScan.InitQueues("192.168.43.255", 50000, 50100);
             portScan.StartScan();
         }
